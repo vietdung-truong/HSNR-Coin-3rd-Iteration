@@ -7,7 +7,7 @@ public class shutDownThread extends Thread {
 
     ArrayList<PrintWriter> outputList;
 
-    shutDownThread(ArrayList<PrintWriter> outputList)
+    public shutDownThread(ArrayList<PrintWriter> outputList)
     {
 
         super("shutDownThread");

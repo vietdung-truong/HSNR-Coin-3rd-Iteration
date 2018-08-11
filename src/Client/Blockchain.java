@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-
-
 public class Blockchain {
 
 	public static ArrayList<Block> blockchain = new ArrayList<Block>();

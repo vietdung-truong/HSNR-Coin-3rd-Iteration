@@ -1,4 +1,4 @@
-package Client;
+package Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,15 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
 import com.google.gson.GsonBuilder;
+
+import Client.Block;
+import Client.Blockchain;
+import Client.PeerThread;
+import Client.StringUtil;
+import Client.Transaction;
+import Client.TransactionOutput;
+import Client.Wallet;
+import Client.shutDownThread;
 
 
 public class MainFirstServer {
