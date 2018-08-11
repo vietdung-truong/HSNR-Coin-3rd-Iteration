@@ -1,4 +1,4 @@
-package Client;
+package Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,61 +14,61 @@ public class MainFirstServer {
 
 	public static ArrayList<PrintWriter> outputList;
 	public static ArrayList<BufferedReader> inputList;
-	public static HashMap<String,TransactionOutput> BlocklessTransactionPool = new HashMap<String,TransactionOutput>(); //listet alle outputs für die Miners
+	public static HashMap<String,ServerTransactionOutput> BlocklessTransactionPool = new HashMap<String,ServerTransactionOutput>(); //listet alle outputs für die Miners
 	public static String tailHash;
-	public static Blockchain blockchainobject;
+	public static ServerBlockchain blockchainobject;
 	public static int fixedCount = 0;
 	
-	public static Wallet walletA;
-	public static Wallet walletB;
-	public static Wallet walletC;
-	public static Wallet coinBase;
-	public static Transaction genesisTransaction;
+	public static ServerWallet walletA;
+	public static ServerWallet walletB;
+	public static ServerWallet walletC;
+	public static ServerWallet coinBase;
+	public static ServerTransaction genesisTransaction;
 
 	public static void main(String[] args) {
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(Blockchain.blockchain);
+		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(ServerBlockchain.blockchain);
 		System.out.println(blockchainJson);
 		outputList = new ArrayList<>();
 		inputList = new ArrayList<>();
 		tailHash = "";
-		blockchainobject = new Blockchain();
-		walletA = new Wallet();
-		walletB = new Wallet();
-		walletC = new Wallet();
-		coinBase = new Wallet();
-		genesisTransaction = new Transaction(coinBase.publicKey, walletA.publicKey, 100f, null);
+		blockchainobject = new ServerBlockchain();
+		walletA = new ServerWallet();
+		walletB = new ServerWallet();
+		walletC = new ServerWallet();
+		coinBase = new ServerWallet();
+		genesisTransaction = new ServerTransaction(coinBase.publicKey, walletA.publicKey, 100f, null);
 		genesisTransaction.generateSignature(coinBase.privateKey); // manually sign the genesis transaction
 		genesisTransaction.transactionID = "0"; // manually set the transaction id
-		genesisTransaction.outputs.add(new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
+		genesisTransaction.outputs.add(new ServerTransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
 				genesisTransaction.transactionID)); // manually add the Transactions Output
-		Blockchain.UTXOs.put(genesisTransaction.outputs.get(0).ID, genesisTransaction.outputs.get(0));
-		Blockchain.isChainValid();
+		ServerBlockchain.UTXOs.put(genesisTransaction.outputs.get(0).ID, genesisTransaction.outputs.get(0));
+		ServerBlockchain.isChainValid();
 		System.out.println("Creating and Mining Genesis block... ");
-		Block genesis = new Block("0");
+		ServerBlock genesis = new ServerBlock("0");
 		genesis.addTransaction(genesisTransaction);
-		Blockchain.addBlock(genesis); 
+		ServerBlockchain.addBlock(genesis); 
 
 		// TESTING
 		
 		String testprivateA, testprivateB;
 		
 		
-		testprivateA = StringUtil.privateKeyToWIF(walletA.privateKey);
+		testprivateA = ServerStringUtil.privateKeyToWIF(walletA.privateKey);
 		
 		System.out.println("Wallet A data:");
-		System.out.println(StringUtil.publicKeyToString(walletA.publicKey));
+		System.out.println(ServerStringUtil.publicKeyToString(walletA.publicKey));
 		System.out.println(testprivateA);
 		
 		System.out.println("Wallet C data:");
-		System.out.println(StringUtil.publicKeyToString(walletC.publicKey));
-		System.out.println(StringUtil.privateKeyToWIF(walletC.privateKey));
+		System.out.println(ServerStringUtil.publicKeyToString(walletC.publicKey));
+		System.out.println(ServerStringUtil.privateKeyToWIF(walletC.privateKey));
 		
 		System.out.println("Now changing");
-		walletC.setPrivateKey(StringUtil.stringToPrivateKey(testprivateA));		
+		walletC.setPrivateKey(ServerStringUtil.stringToPrivateKey(testprivateA));		
 
-		System.out.println(StringUtil.privateKeyToWIF(walletA.privateKey));
-		System.out.println(StringUtil.privateKeyToWIF(walletC.privateKey));
+		System.out.println(ServerStringUtil.privateKeyToWIF(walletA.privateKey));
+		System.out.println(ServerStringUtil.privateKeyToWIF(walletC.privateKey));
 		System.out.println("Is private a = c?");
 		System.out.println(walletC.privateKey == walletA.privateKey);
 		System.out.println(walletC.privateKey.equals(walletA.privateKey));
@@ -77,8 +77,8 @@ public class MainFirstServer {
 		walletC.refreshKeyPair();
 		walletA.refreshKeyPair();
 		
-		System.out.println(StringUtil.publicKeyToString(walletA.publicKey));
-		System.out.println(StringUtil.publicKeyToString(walletC.publicKey));
+		System.out.println(ServerStringUtil.publicKeyToString(walletA.publicKey));
+		System.out.println(ServerStringUtil.publicKeyToString(walletC.publicKey));
 		
 		System.out.println("Is public a = c?");
 		System.out.println(walletA.publicKey == walletC.publicKey);
@@ -100,46 +100,46 @@ public class MainFirstServer {
 		//System.out.println("\n\n" + StringUtil.getStringFromKey(walletA.publicKey) + "\n" + StringUtil.getStringFromKey(walletA.privateKey));
 		
 		
-		Block block1 = new Block(genesis.hash);
+		ServerBlock block1 = new ServerBlock(genesis.hash);
 		System.out.println("\nWalletA's balance is: " + walletA.getBalance());
 		System.out.println("\n1. WalletA is Attempting to send funds (40) to WalletB...");
 		block1.addTransaction(walletA.sendFunds(walletB.publicKey, 40f));
-		Blockchain.addBlock(block1);
-		Blockchain.isChainValid();
+		ServerBlockchain.addBlock(block1);
+		ServerBlockchain.isChainValid();
 		System.out.println("\nWalletA's balance is: " + walletA.getBalance());
 		System.out.println("WalletB's balance is: " + walletB.getBalance());
 
-		Block block2 = new Block(block1.hash);
+		ServerBlock block2 = new ServerBlock(block1.hash);
 		System.out.println("\n2. WalletA is Attempting to send funds (50) to WalletB...");
 		System.out.println("The privateKeytoString and StringtoPrivateKy was tested. The test is success if the result correct");
 		block2.addTransaction(walletA.sendFunds(walletB.publicKey, 50f));
-		Blockchain.addBlock(block2);
-		Blockchain.isChainValid();
+		ServerBlockchain.addBlock(block2);
+		ServerBlockchain.isChainValid();
 		System.out.println("\nWalletA's balance is: " + walletA.getBalance());
 		System.out.println("WalletB's balance is: " + walletB.getBalance());
 
-		Block block3 = new Block(block2.hash);
+		ServerBlock block3 = new ServerBlock(block2.hash);
 		System.out.println("\n3. WalletB is Attempting to send funds (20) to WalletA...");
 		System.out.println("Testing to change privateKey to public");
 		block3.addTransaction(walletB.sendFunds(walletA.publicKey, 20f));
-		Blockchain.addBlock(block3);
-		Blockchain.isChainValid();
+		ServerBlockchain.addBlock(block3);
+		ServerBlockchain.isChainValid();
 		System.out.println("\nWalletA's balance is: " + walletA.getBalance());
 		System.out.println("WalletB's balance is: " + walletB.getBalance());
 		
-		Block block4 = new Block(block3.hash);
+		ServerBlock block4 = new ServerBlock(block3.hash);
 		System.out.println("\n4. WalletA is Attempting to send funds (20) to WalletB...");
 		block4.addTransaction(walletA.sendFunds(walletB.publicKey, 20f));
-		Blockchain.addBlock(block4);
-		Blockchain.isChainValid();
+		ServerBlockchain.addBlock(block4);
+		ServerBlockchain.isChainValid();
 		System.out.println("\nWalletA's balance is: " + walletA.getBalance());
 		System.out.println("WalletB's balance is: " + walletB.getBalance());
 		
-		Block block5 = new Block(block4.hash);
+		ServerBlock block5 = new ServerBlock(block4.hash);
 		System.out.println("\n5. WalletA is Attempting to send funds (20) to WalletB...");
 		block5.addTransaction(walletA.sendFunds(walletB.publicKey, 20f));
-		Blockchain.addBlock(block5);
-		Blockchain.isChainValid();
+		ServerBlockchain.addBlock(block5);
+		ServerBlockchain.isChainValid();
 		System.out.println("\nWalletA's balance is: " + walletA.getBalance());
 		System.out.println("WalletB's balance is: " + walletB.getBalance());
 		
@@ -149,9 +149,9 @@ public class MainFirstServer {
 	private static void acceptAndConnect() {
 		// TODO Auto-generated method stub
 		try (ServerSocket serverSocket = new ServerSocket(1234)) {
-			Runtime.getRuntime().addShutdownHook(new shutDownThread(outputList));
+			Runtime.getRuntime().addShutdownHook(new ServershutDownThread(outputList));
 			while (true) {
-				PeerThread pt = new PeerThread(serverSocket.accept());
+				ServerPeerThread pt = new ServerPeerThread(serverSocket.accept());
 				pt.start();
 			}
 		} catch (IOException e) {
