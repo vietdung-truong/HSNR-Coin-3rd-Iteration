@@ -1,27 +1,25 @@
-package Client;
+package Server;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
+public class ServerBlockchain {
 
-
-public class Blockchain {
-
-	public static ArrayList<Block> blockchain = new ArrayList<Block>();
-	public static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>(); // listet alle
+	public static ArrayList<ServerBlock> blockchain = new ArrayList<ServerBlock>();
+	public static HashMap<String, ServerTransactionOutput> UTXOs = new HashMap<String, ServerTransactionOutput>(); // listet alle
 																										// noch nicht
 																										// benutzte
 																										// transaktionen
-	public static ArrayList<Transaction> blocklessPool = new ArrayList<Transaction>();
+	public static ArrayList<ServerTransaction> blocklessPool = new ArrayList<ServerTransaction>();
 
 	public static float minimumTransaction = 0.1f;
 	final static int difficulty = 5;
 
 
 
-	public static void addBlock(Block newBlock) {// hier wird ein Block gemint und danach ins das Blockchain geadded.
+	public static void addBlock(ServerBlock newBlock) {// hier wird ein Block gemint und danach ins das Blockchain geadded.
 		// TODO Auto-generated method stub
 		newBlock.mineBlock(difficulty);
 		blockchain.add(newBlock);
@@ -29,22 +27,22 @@ public class Blockchain {
 	
 	public static void initiateblocklessPool() {
 		for (int i = 0; i < 50; i++) {
-			blocklessPool.add(Transaction.coinbase());
+			blocklessPool.add(ServerTransaction.coinbase());
 		}
 	}
 
 	public static Boolean isChainValid() {// hier werden die Werte von hashes und previoushashes mit den 'calculate'
 		// Werten verglichen. Falls die Werte nicht stimmen, liefert der Vergleich eine
 		// negative Antwort
-		Block currentBlock;
-		Block previousBlock;
+		ServerBlock currentBlock;
+		ServerBlock previousBlock;
 		String hashTarget = new String(new char[difficulty]).replace('\0', '0');
-		HashMap<String, TransactionOutput> tempUTXOs = new HashMap<String, TransactionOutput>(); // a temporary working
+		HashMap<String, ServerTransactionOutput> tempUTXOs = new HashMap<String, ServerTransactionOutput>(); // a temporary working
 																									// list of unspent
 																									// transactions at a
 																									// given block
 																									// state.
-		tempUTXOs.put(MainStartScreen.genesisTransaction.outputs.get(0).ID, MainStartScreen.genesisTransaction.outputs.get(0));
+		tempUTXOs.put(MainFirstServer.genesisTransaction.outputs.get(0).ID, MainFirstServer.genesisTransaction.outputs.get(0));
 		for (int i = 1; i < blockchain.size(); i++) {
 			currentBlock = blockchain.get(i);
 			previousBlock = blockchain.get(i - 1);
@@ -65,9 +63,9 @@ public class Blockchain {
 			}
 
 			// loop thru blockchains transactions:
-			TransactionOutput tempOutput;
+			ServerTransactionOutput tempOutput;
 			for (int t = 0; t < currentBlock.transactions.size(); t++) {
-				Transaction currentTransaction = currentBlock.transactions.get(t);
+				ServerTransaction currentTransaction = currentBlock.transactions.get(t);
 
 				if (!currentTransaction.verifySignature()) {
 					System.out.println("#Signature on Transaction(" + t + ") is Invalid");
@@ -78,7 +76,7 @@ public class Blockchain {
 					return false;
 				}
 
-				for (TransactionInput input : currentTransaction.inputs) {
+				for (ServerTransactionInput input : currentTransaction.inputs) {
 					tempOutput = tempUTXOs.get(input.transactionOutputId);
 
 					if (tempOutput == null) {
@@ -94,7 +92,7 @@ public class Blockchain {
 					tempUTXOs.remove(input.transactionOutputId);
 				}
 
-				for (TransactionOutput output : currentTransaction.outputs) {
+				for (ServerTransactionOutput output : currentTransaction.outputs) {
 					tempUTXOs.put(output.ID, output);
 				}
 
