@@ -15,7 +15,7 @@ public class ServerBlockchain {
 	public static ArrayList<ServerTransaction> blocklessPool = new ArrayList<ServerTransaction>();
 
 	public static float minimumTransaction = 0.1f;
-	final static int difficulty = 1;
+	final static int difficulty = 5;
 
 
 

@@ -150,6 +150,7 @@ public class MainFirstServer {
 		// TODO Auto-generated method stub
 		try (ServerSocket serverSocket = new ServerSocket(1234)) {
 			Runtime.getRuntime().addShutdownHook(new ServershutDownThread(outputList));
+			System.out.println("Serversocket opened. Waiting for incoming connection");
 			while (true) {
 				ServerPeerThread pt = new ServerPeerThread(serverSocket.accept());
 				pt.start();

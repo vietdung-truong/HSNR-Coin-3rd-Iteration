@@ -17,7 +17,7 @@ public class Blockchain {
 	public static ArrayList<Transaction> blocklessPool = new ArrayList<Transaction>();
 
 	public static float minimumTransaction = 0.1f;
-	final static int difficulty = 1;
+	final static int difficulty = 5;
 
 
 

@@ -12,6 +12,7 @@ public class ServerPeerProtocol extends Thread {
 
 		if (state == WAITING) {
 			if (inputString.equals(clues[0])) {
+				System.out.println("got command: connection-request");
 				outputString = "connection-confirmed";
 			}
 		}

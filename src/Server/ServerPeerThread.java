@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.plaf.synth.SynthSpinnerUI;
+
 public class ServerPeerThread extends Thread {
 	private Socket socket = null;
 	 
@@ -26,6 +28,7 @@ public class ServerPeerThread extends Thread {
             ServerPeerProtocol kkp = new ServerPeerProtocol();
             outputLine = kkp.processInput("connection-request");
             out.println(outputLine);
+            System.out.println("sending out connection request");
  
             while ((inputLine = in.readLine()) != null) {
                 outputLine = kkp.processInput(inputLine);
