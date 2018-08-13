@@ -6,15 +6,18 @@ Nachdem die erste Knote online ist, kann man die andere Clients, unsere ausführ
 zweiten CLient
 
 die .java-Datei von dem "First Server/Client" kann man in dem folgenden Ordner finden:
+
 src/server/MainFirstServer.java
 
 die Datei von "Client" kann man in dem fiolgenden Ordner finden:
+
 src/Client/MainStartScreen.java
 
 Auser den .java Dateien gibt es die Startknoten auch in der ausführbarem .jar Format. Die Daten kann man direkt im root von unserem
 Repository finden:
 
 Niedercoin 1st Client.jar - das "First Server"
+
 Niedercoin Client.jar - das "Client"
 
 Wenn Niedercoin Client.jar ausgeführt wird, wird als erstres das Blockchain vorbereitet (es werden 4 Testblöcke gemint) und erst danach
